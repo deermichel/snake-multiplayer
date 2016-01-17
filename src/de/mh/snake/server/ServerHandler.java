@@ -4,9 +4,12 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.swing.Timer;
 
@@ -25,6 +28,8 @@ public class ServerHandler implements ActionListener {
 	private Server server;
 	private Game game;
 	private ArrayList<Integer> deadIds = new ArrayList<>();
+	private HashMap<Integer, Integer> clients = new HashMap<>();
+	private ArrayList<String> banList = new ArrayList<>();
 	public Timer timer;
 	
 
@@ -53,6 +58,30 @@ public class ServerHandler implements ActionListener {
 						Request request = (Request)object;
 						handleRequest(request.content, connection);
 					}
+				}
+				@Override
+				public void connected(Connection connection) {
+					if (banList.contains(connection.getRemoteAddressTCP().getAddress().toString())) {
+						log("Banned IP " + connection.getRemoteAddressTCP().getAddress() + " tried to connect");
+						respond("ban;You were banned!", connection);
+						connection.close();
+					} else {
+						log("Client " + connection.getID() + " (" + connection.getRemoteAddressTCP().getAddress() + ") connected");
+					}
+				}
+				@Override
+				public void disconnected(Connection connection) {
+					log("Client " + connection.getID() + " disconnected");
+					
+					// remove active players
+					if (clients.containsKey(connection.getID())) {
+						int playerID = clients.get(connection.getID());
+						game.players.set(playerID - 2, null);
+						log("Player " + playerID + " removed");
+						deadIds.add(playerID);
+						clients.remove(connection.getID());
+					}
+					
 				}
 			});
 			
@@ -91,16 +120,20 @@ public class ServerHandler implements ActionListener {
 		 * freeze;[id]
 		 * slowdown;[id];[steps]
 		 * kamikaze;[id]
+		 * ban;[ip]
+		 * unban;[ip]
+		 * score;[id];[score]
 		 * 
 		 */
 		
-		log("Command: " + command);
+		System.out.println("Command: " + command);
 		
 		if (command.startsWith("freeze")) {
 			
 			Player player = game.players.get(Integer.valueOf(command.substring(7)) - 2);
 			if (player == null) return;
 			player.freeze = !player.freeze;
+			log("Freezed player " + player.id);
 			
 		} else if (command.startsWith("slowdown")) {
 			
@@ -108,12 +141,40 @@ public class ServerHandler implements ActionListener {
 			Player player = game.players.get(Integer.valueOf(temp[1]) - 2);
 			if (player == null) return;
 			player.steps = Integer.valueOf(temp[2]);
+			log("Slowed player " + player.id + " down to " + player.steps + " steps");
 			
 		} else if (command.startsWith("kamikaze")) {
 			
 			Player player = game.players.get(Integer.valueOf(command.substring(9)) - 2);
 			if (player == null) return;
 			player.kamikaze = player.direction;
+			log("Locked direction of player " + player.id);
+			
+		} else if (command.startsWith("ban")) {
+			
+			String ip = command.substring(4);
+			banList.add(ip);
+			for (Connection c : server.getConnections()) {
+				if (c.getRemoteAddressTCP().getAddress().toString().equals(ip)) {
+					respond("ban;You were banned!", c);
+					c.close();
+				}
+			}
+			log("Banned IP " + ip);
+			
+		} else if (command.startsWith("unban")) {
+			
+			String ip = command.substring(6);
+			if (banList.contains(ip)) banList.remove(ip);
+			log("Unbanned IP " + ip);
+			
+		} else if (command.startsWith("score")) {
+
+			String temp[] = command.split(";");
+			Player player = game.players.get(Integer.valueOf(temp[1]) - 2);
+			if (player == null) return;
+			player.score = Integer.valueOf(temp[2]);
+			log("Set score of player " + player.id + " to " + player.score);
 			
 		}
 		
@@ -121,7 +182,7 @@ public class ServerHandler implements ActionListener {
 	
 	private void handleRequest(String content, Connection connection) {
 		
-		log("Request: " + content);
+		System.out.println("Request: " + content);
 		
 		/** --- COMMANDS ---
 		 * 
@@ -147,6 +208,8 @@ public class ServerHandler implements ActionListener {
 			Player newPlayer = new Player(game.players.size() + 2, Color.BLACK);
 			game.players.add(newPlayer);
 			respond("setID;" + newPlayer.id, connection);
+			clients.put(connection.getID(), newPlayer.id);
+			log("Player " + newPlayer.id + " joined the game (Client " + connection.getID() + ")");
 			
 		} else if (content.startsWith("direction")) {
 			
@@ -207,6 +270,7 @@ public class ServerHandler implements ActionListener {
 					response = new Response();
 					response.content = "highscore;" + game.highscore;
 					server.sendToAllTCP(response);
+					log("New highscore by player " + p.id + ": " + game.highscore);
 				}
 				
 			} else if (p == null && !deadIds.contains(i + 2)) {
@@ -214,6 +278,7 @@ public class ServerHandler implements ActionListener {
 				response = new Response();
 				response.content = "dead;" + (i + 2);
 				server.sendToAllTCP(response);
+				log("Player " + (i + 2) + " died");
 			}
 			
 		}

@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.Timer;
@@ -77,13 +78,18 @@ public class Game {
 			for (Player q : players) {
 				if (q == null) continue;
 				
-				if (p == q &&
-						q.segmentsX.subList(1, q.segmentsX.size()).contains(pX) &&
-						q.segmentsY.subList(1, q.segmentsY.size()).contains(pY)) {
+				if (p == q) {
 					
-					// dead
-					players.set(i, null);
-					continue outerLoop;
+					for (int d = 1; d < q.segmentsX.size(); d++) {
+						if (q.segmentsX.get(d) == pX && q.segmentsY.get(d) == pY) {
+							
+							// dead
+							players.set(i, null);
+							continue outerLoop;
+							
+						}
+						
+					}
 					
 				} else if (p != q && q.segmentsX.contains(pX) && q.segmentsY.contains(pY)) {
 

@@ -42,13 +42,14 @@ public class ClientHandler implements KeyListener {
 		
 		client.start();
 		try {
-			
-			InetAddress address = client.discoverHost(54001, 5000);
-			client.connect(5000, address, 54000, 54001);
-			
+
 			Kryo kryo = client.getKryo();
 			kryo.register(Request.class);
 			kryo.register(Response.class);
+			
+			InetAddress address = client.discoverHost(54001, 5000);
+			//InetAddress address = InetAddress.getByName(JOptionPane.showInputDialog("Enter server IP"));	// yeah, worldwide is possible ;)
+			client.connect(5000, address, 54000, 54001);
 			
 			client.addListener(new Listener() {
 				public void received(Connection connection, Object object) {
@@ -86,6 +87,7 @@ public class ClientHandler implements KeyListener {
 	
 	public void stop() {
 		
+		client.close();
 		client.stop();
 
 	}
@@ -152,6 +154,12 @@ public class ClientHandler implements KeyListener {
 				snakeClient.board.repaint();
 				ingame = false;
 			}
+			
+		} else if (content.startsWith("ban")) {
+			
+			snakeClient.board.text = content.substring(4);
+			snakeClient.board.repaint();
+			ingame = false;
 			
 		}
 		

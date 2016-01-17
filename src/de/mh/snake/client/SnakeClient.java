@@ -6,6 +6,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class SnakeClient extends JFrame {
 
@@ -35,6 +37,12 @@ public class SnakeClient extends JFrame {
 	 * Create the frame.
 	 */
 	public SnakeClient() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				handler.stop();
+			}
+		});
 		setTitle("Snake Multiplayer");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
