@@ -29,8 +29,10 @@ public class SnakeServer extends JFrame {
 	private JTextField textCmd;
 
 	
-	/**
-	 * Launch the application.
+	/** Snake Server
+	 * - LAN based Snake multiplayer game
+	 * @author Micha Hanselmann
+	 * Copyright (c) 2016 Micha Hanselmann
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -49,7 +51,7 @@ public class SnakeServer extends JFrame {
 	 * Create the frame.
 	 */
 	public SnakeServer() {
-		setTitle("Snake Server");
+		setTitle("Snake Server (© 2016 Micha Hanselmann)");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();

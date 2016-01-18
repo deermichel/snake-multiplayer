@@ -16,9 +16,10 @@ public class SnakeClient extends JFrame {
 	public Board board;
 	
 	
-
-	/**
-	 * Launch the application.
+	/** Snake Multiplayer
+	 * - LAN based Snake multiplayer game
+	 * @author Micha Hanselmann
+	 * Copyright (c) 2016 Micha Hanselmann
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -43,7 +44,7 @@ public class SnakeClient extends JFrame {
 				handler.stop();
 			}
 		});
-		setTitle("Snake Multiplayer");
+		setTitle("Snake Multiplayer (© 2016 Micha Hanselmann)");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);

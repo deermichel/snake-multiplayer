@@ -123,6 +123,8 @@ public class ServerHandler implements ActionListener {
 		 * ban;[ip]
 		 * unban;[ip]
 		 * score;[id];[score]
+		 * speed;[tick]
+		 * gamemode;[mode]	0 normal	1 deadPlayersBecomeSolids
 		 * 
 		 */
 		
@@ -175,6 +177,29 @@ public class ServerHandler implements ActionListener {
 			if (player == null) return;
 			player.score = Integer.valueOf(temp[2]);
 			log("Set score of player " + player.id + " to " + player.score);
+			
+		} else if (command.startsWith("speed")) {
+			
+			int tick = Integer.valueOf(command.substring(6));
+			timer.setDelay(tick);
+			log("Changed game tick to " + tick);
+			
+		} else if (command.startsWith("gamemode")) {
+			
+			int mode = Integer.valueOf(command.substring(9));
+			switch (mode) {
+			
+				case 1:
+					game.deadPlayersBecomeSolids = true;
+					break;
+				
+				default:	// 0
+					game.deadPlayersBecomeSolids = false;
+					mode = 0;
+					break;
+			
+			}
+			log("Switched gamemode to " + mode);
 			
 		}
 		

@@ -22,7 +22,10 @@ public class Game {
 	private Random rnd = new Random();
 	public ArrayList<Integer> fruitsX = new ArrayList<>();
 	public ArrayList<Integer> fruitsY = new ArrayList<>();
+	public ArrayList<Integer> solidsX = new ArrayList<>();
+	public ArrayList<Integer> solidsY = new ArrayList<>();
 	public int highscore = 0;
+	public boolean deadPlayersBecomeSolids = false;
 	
 	
 	public Game() {
@@ -38,7 +41,8 @@ public class Game {
 
 		move();
 		checkCollisions();
-		checkFruit();
+		checkSolids();
+		checkFruits();
 		
 		updateField();
 		
@@ -67,6 +71,7 @@ public class Game {
 					Collections.min(p.segmentsY) < 0) {
 				
 				// dead
+				if (deadPlayersBecomeSolids) playerToSolids(p);
 				players.set(i, null);
 				continue;
 				
@@ -84,6 +89,7 @@ public class Game {
 						if (q.segmentsX.get(d) == pX && q.segmentsY.get(d) == pY) {
 							
 							// dead
+							if (deadPlayersBecomeSolids) playerToSolids(p);
 							players.set(i, null);
 							continue outerLoop;
 							
@@ -94,6 +100,7 @@ public class Game {
 				} else if (p != q && q.segmentsX.contains(pX) && q.segmentsY.contains(pY)) {
 
 					// dead
+					if (deadPlayersBecomeSolids) playerToSolids(p);
 					players.set(i, null);
 					continue outerLoop;
 					
@@ -105,7 +112,40 @@ public class Game {
 		
 	}
 	
-	private void checkFruit() {
+	private void checkSolids() {
+		
+		outerLoop:
+		for (int i = 0; i < players.size(); i++) {
+			Player p = players.get(i);
+			if (p == null) continue;
+			
+			for (int j = 0; j < solidsX.size(); j++) {
+				
+				if (p.segmentsX.get(0) == solidsX.get(j) && p.segmentsY.get(0) == solidsY.get(j)) {
+
+					int result = fruitsX.indexOf(solidsX.get(j));
+					if (result > -1 && fruitsY.get(result) == solidsY.get(j)) {
+						
+						// don't die when fruit overlaps solid
+						
+					} else {
+
+						// dead
+						if (deadPlayersBecomeSolids) playerToSolids(p);
+						players.set(i, null);
+						continue outerLoop;
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	private void checkFruits() {
 		
 		for (Player p : players) {
 			if (p == null) continue;
@@ -132,6 +172,10 @@ public class Game {
 		
 		field = new int[WIDTH][HEIGHT];
 		
+		for (int i = 0; i < solidsX.size(); i++) {
+			field[solidsX.get(i)][solidsY.get(i)] = -1;
+		}
+		
 		for (int i = 0; i < FRUITS; i++) {
 			field[fruitsX.get(i)][fruitsY.get(i)] = 1;
 		}
@@ -147,6 +191,19 @@ public class Game {
 			// head
 			field[p.segmentsX.get(0)][p.segmentsY.get(0)] = -p.id;
 			
+		}
+		
+	}
+	
+	private void playerToSolids(Player p) {
+		
+		for (int i = 0; i < p.segmentsX.size(); i++) {
+			int x = p.segmentsX.get(i);
+			int y = p.segmentsY.get(i);
+			if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
+				solidsX.add(x);
+				solidsY.add(y);
+			}
 		}
 		
 	}
