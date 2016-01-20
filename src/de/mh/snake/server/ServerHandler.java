@@ -220,7 +220,10 @@ public class ServerHandler implements ActionListener {
 		 * score;[id];[score]
 		 * dead;[id]
 		 * highscore;[highscore]
+		 * colors;[id]:[color];[id2]...
+		 * 
 		 * getHighscore
+		 * getColors
 		 * 
 		 * dead;[id]
 		 * 
@@ -230,10 +233,16 @@ public class ServerHandler implements ActionListener {
 			
 			// begin with 2 ( -> 0 nothing 1 fruit -1 border)
 			
-			Player newPlayer = new Player(game.players.size() + 2, Color.BLACK);
+			Player newPlayer = new Player(game.players.size() + 2, content.substring(6));
 			game.players.add(newPlayer);
 			respond("setID;" + newPlayer.id, connection);
 			clients.put(connection.getID(), newPlayer.id);
+			
+			// update colors
+			Response response = new Response();
+			response.content = "colors;" + newPlayer.id + ":" + newPlayer.color;
+			server.sendToAllTCP(response);
+			
 			log("Player " + newPlayer.id + " joined the game (Client " + connection.getID() + ")");
 			
 		} else if (content.startsWith("direction")) {
@@ -246,6 +255,17 @@ public class ServerHandler implements ActionListener {
 		} else if (content.startsWith("getHighscore")) {
 			
 			respond("highscore;" + game.highscore, connection);
+			
+		} else if (content.startsWith("getColors")) {
+			
+			String colors = "";
+			for (Player p : game.players) {
+				if (p == null) continue;
+				colors += p.id + ":" + p.color + ";";
+			}
+			if (colors.length() == 0) return;
+			colors = colors.substring(0, colors.length() - 1);
+			respond("colors;" + colors, connection);
 			
 		}
 		

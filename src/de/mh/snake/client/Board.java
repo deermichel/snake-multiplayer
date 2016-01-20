@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -14,6 +17,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import de.mh.snake.Request;
 import de.mh.snake.Response;
@@ -24,20 +28,27 @@ public class Board extends JPanel {
 
 	public static final int DOTS = 20;
 	public static final Color BGCOLOR = Color.decode("#424242");
-	public static final Color MYCOLOR = Color.decode("#F44336");
 	public static final Color FRUITCOLOR = Color.decode("#FFEB3B");
-	public static final Color OTHERCOLOR = Color.decode("#2196F3");
-	public static final Color BORDERCOLOR = Color.decode("#FFFFFF");
+	public static final Color SOLIDCOLOR = Color.decode("#FFFFFF");
 
 	public int[][] field = new int[Game.WIDTH][Game.HEIGHT];
-	public int id = -9999;
+	public int id = 9999;
 	public String text = "";
+	public Color myColor = Color.BLACK;
+	public HashMap<Integer, Color> otherColor = new HashMap<>();
 	
 	
 	public Board() {
 		
 		setBackground(Color.WHITE);
 		setPreferredSize(new Dimension(Game.WIDTH*DOTS, Game.HEIGHT*DOTS));
+		
+		// generate my color
+		Random rnd = new Random();
+		float hue = rnd.nextFloat();
+		float sat = (rnd.nextInt(4000) + 3000) / 10000f;
+		float lum = .7f;
+		myColor = Color.getHSBColor(hue, sat, lum);
 		
 	}
 
@@ -53,19 +64,19 @@ public class Board extends JPanel {
 					g.setColor(FRUITCOLOR);
 					
 				} else if (field[x][y] == -1) {		// border (-1)
-					g.setColor(BORDERCOLOR);
+					g.setColor(SOLIDCOLOR);
 					
 				} else if (field[x][y] == id) {		// my segments (id)
-					g.setColor(MYCOLOR);
+					g.setColor(myColor);
 					
 				} else if (field[x][y] == -id) {	// my head (-id)
-					g.setColor(MYCOLOR.brighter());
+					g.setColor(myColor.brighter());
 					
 				} else if (field[x][y] > 1) {		// other segments (>1)
-					g.setColor(OTHERCOLOR);
+					g.setColor(otherColor.get(field[x][y]));
 					
 				} else if (field[x][y] < -1) {		// other heads (<-1)
-					g.setColor(OTHERCOLOR.brighter());
+					g.setColor(otherColor.get(-field[x][y]).brighter());
 					
 				} else {							// bg (0)
 					g.setColor(BGCOLOR);

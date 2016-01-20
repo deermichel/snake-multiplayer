@@ -176,6 +176,8 @@ public class Game {
 			field[solidsX.get(i)][solidsY.get(i)] = -1;
 		}
 		
+		// TODO: safezone!
+		
 		for (int i = 0; i < FRUITS; i++) {
 			field[fruitsX.get(i)][fruitsY.get(i)] = 1;
 		}

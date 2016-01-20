@@ -63,6 +63,7 @@ public class ClientHandler implements KeyListener {
 			snakeClient.addKeyListener(this);
 			
 			request("getHighscore");
+			request("getColors");
 			
 		} catch (Exception e) {
 			System.out.println(e.toString());
@@ -150,7 +151,7 @@ public class ClientHandler implements KeyListener {
 			String temp[] = content.split(";");
 			if (Integer.valueOf(temp[1]) == id) {
 				snakeClient.board.text = "GAME OVER! Press SPACE to replay. | Highscore: " + highscore;
-				snakeClient.board.id = -9999;
+				snakeClient.board.id = 9999;
 				snakeClient.board.repaint();
 				ingame = false;
 			}
@@ -161,6 +162,13 @@ public class ClientHandler implements KeyListener {
 			snakeClient.board.repaint();
 			ingame = false;
 			
+		} else if (content.startsWith("colors")) {
+		
+			for (String s : content.substring(7).split(";")) {
+				String temp[] = s.split(":");
+				snakeClient.board.otherColor.put(Integer.valueOf(temp[0]), Color.decode(temp[1]));
+			}
+				
 		}
 		
 	}
@@ -192,7 +200,7 @@ public class ClientHandler implements KeyListener {
 		} else if (key == KeyEvent.VK_SPACE && !ingame) {
 			
 			// wanna play
-			request("getID");
+			request("getID;#" + Integer.toHexString(snakeClient.board.myColor.getRGB()).substring(2));
 			
 		}
 		

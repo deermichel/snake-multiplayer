@@ -13,12 +13,12 @@ public class Player {
 	public int kamikaze = -1;
 	public int steps = 1;
 	public int step = 0;
-	public Color color;
+	public String color;
 	public ArrayList<Integer> segmentsX = new ArrayList<>();
 	public ArrayList<Integer> segmentsY = new ArrayList<>();
 	
 	
-	public Player(int id, Color color) {
+	public Player(int id, String color) {
 		
 		this.id = id;
 		this.color = color;
