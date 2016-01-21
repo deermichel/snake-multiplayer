@@ -32,6 +32,7 @@ public class ClientHandler implements KeyListener {
 	public int score = 0;
 	public int highscore = 0;
 	public boolean ingame = false;
+	public Timer reconnectionTimer;
 	
 
 	public ClientHandler(SnakeClient snakeClient) {
@@ -57,6 +58,35 @@ public class ClientHandler implements KeyListener {
 						Response response = (Response)object;
 						handleResponse(response.content, connection);
 					}
+				}
+
+				@Override
+				public void disconnected(Connection connection) {
+					System.out.println("Connection lost!");
+
+					// try to reconnect
+					snakeClient.board.text = "Connection lost! Trying to reconnect...";
+					snakeClient.board.repaint();
+					ingame = false;
+					reconnectionTimer = new Timer(3000, new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							try {
+								client.reconnect(5000);
+								reconnectionTimer.stop();
+
+								snakeClient.board.id = 9999;
+								request("getHighscore");
+								request("getColors");
+								
+							} catch (IOException e1) {
+								System.out.println(e1.toString());
+							}
+						}
+					});
+					reconnectionTimer.setRepeats(true);
+					reconnectionTimer.start();
+					
 				}
 			});
 			
