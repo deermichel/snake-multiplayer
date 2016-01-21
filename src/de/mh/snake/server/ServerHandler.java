@@ -125,6 +125,9 @@ public class ServerHandler implements ActionListener {
 		 * score;[id];[score]
 		 * speed;[tick]
 		 * gamemode;[mode]	0 normal	1 deadPlayersBecomeSolids
+		 * addsolid;[x];[y]
+		 * remsolid;[x];[y]
+		 * clearsolids
 		 * 
 		 */
 		
@@ -200,6 +203,30 @@ public class ServerHandler implements ActionListener {
 			
 			}
 			log("Switched gamemode to " + mode);
+			
+		} else if (command.startsWith("addsolid")) {
+
+			String temp[] = command.split(";");
+			game.solidsX.add(Integer.valueOf(temp[1]));
+			game.solidsY.add(Integer.valueOf(temp[2]));
+			log("Added solid at X:" + temp[1] + " Y:" + temp[2]);
+			
+		} else if (command.startsWith("remsolid")) {
+
+			String temp[] = command.split(";");
+			for (int i = 0; i < game.solidsX.size(); i++) {
+				if (game.solidsX.get(i) == Integer.valueOf(temp[1]) && game.solidsY.get(i) == Integer.valueOf(temp[2])) {
+					game.solidsX.remove(i);
+					game.solidsY.remove(i);
+					log("Removed solid at X:" + temp[1] + " Y:" + temp[2]);
+				}
+			}
+			
+		} else if (command.startsWith("clearsolids")) {
+			
+			game.solidsX.clear();
+			game.solidsY.clear();
+			log("Removed all solids");
 			
 		}
 		

@@ -171,17 +171,26 @@ public class Game {
 	private void updateField() {
 		
 		field = new int[WIDTH][HEIGHT];
-		
+
+		// solids
 		for (int i = 0; i < solidsX.size(); i++) {
+			
+			// safezone
+			if (solidsX.get(i) < 3 && solidsY.get(i) < 3) {
+				solidsX.remove(i);
+				solidsY.remove(i);
+				continue;
+			}
+			
 			field[solidsX.get(i)][solidsY.get(i)] = -1;
 		}
 		
-		// TODO: safezone!
-		
+		// fruits
 		for (int i = 0; i < FRUITS; i++) {
 			field[fruitsX.get(i)][fruitsY.get(i)] = 1;
 		}
 		
+		// players
 		for (Player p : players) {
 			if (p == null) continue;
 			
