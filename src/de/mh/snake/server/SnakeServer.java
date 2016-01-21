@@ -8,19 +8,17 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 
-import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default;
-
 import javax.swing.JButton;
 import javax.swing.JTextPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import java.awt.event.InputMethodListener;
-import java.awt.event.InputMethodEvent;
 
 public class SnakeServer extends JFrame {
-
+	
+	private static final long serialVersionUID = 1L;
+	
 	private ServerHandler handler;
 	private JPanel contentPane;
 	public JButton buttonStart;

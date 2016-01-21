@@ -7,9 +7,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
@@ -17,12 +14,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
-
 import de.mh.snake.Request;
 import de.mh.snake.Response;
 import de.mh.snake.server.Game;
-import de.mh.snake.server.Player;
 
 public class ClientHandler implements KeyListener {
 	

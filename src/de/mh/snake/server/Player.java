@@ -1,6 +1,5 @@
 package de.mh.snake.server;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 public class Player {

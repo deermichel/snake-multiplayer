@@ -1,14 +1,8 @@
 package de.mh.snake.server;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
-
-import javax.swing.Timer;
 
 public class Game {
 

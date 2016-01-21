@@ -5,12 +5,13 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class SnakeClient extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+	
 	public ClientHandler handler;
 	private JPanel contentPane;
 	public Board board;

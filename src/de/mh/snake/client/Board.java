@@ -4,28 +4,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 import javax.swing.JPanel;
-import javax.swing.Timer;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
-import de.mh.snake.Request;
-import de.mh.snake.Response;
 import de.mh.snake.server.Game;
-import de.mh.snake.server.Player;
 
 public class Board extends JPanel {
-
+	
+	private static final long serialVersionUID = 1L;
+	
 	public static final int DOTS = 20;
 	public static final Color BGCOLOR = Color.decode("#424242");
 	public static final Color FRUITCOLOR = Color.decode("#FFEB3B");
